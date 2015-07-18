@@ -174,11 +174,7 @@ module ActionController
     #   safe_params = params.permit(:name)
     #   safe_params.to_h # => {"name"=>"Senjougahara Hitagi"}
     def to_h
-      if permitted?
-        @parameters.to_h
-      else
-        slice(*self.class.always_permitted_parameters).permit!.to_h
-      end
+      with_indifferent_access.to_h
     end
 
     # Returns an unsafe, unfiltered +Hash+ representation of this parameter.
@@ -186,6 +182,16 @@ module ActionController
       @parameters.to_h
     end
     alias_method :to_unsafe_hash, :to_unsafe_h
+
+    # Returns a safe +HashWithIndifferentAccess+ representation of this parameter with all
+    # unpermitted keys removed.
+    def with_indifferent_access
+      if permitted?
+        @parameters
+      else
+        slice(*self.class.always_permitted_parameters).permit!.with_indifferent_access
+      end
+    end
 
     # Convert all hashes in values into parameters, then yield each pair like
     # the same way as <tt>Hash#each_pair</tt>
