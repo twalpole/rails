@@ -21,7 +21,7 @@ module ActiveModel
           raise ActiveModel::ForbiddenAttributesError if !attributes.permitted?
           attributes.to_h
         else
-          attributes
+          attributes.to_h
         end
       end
       alias :sanitize_forbidden_attributes :sanitize_for_mass_assignment
