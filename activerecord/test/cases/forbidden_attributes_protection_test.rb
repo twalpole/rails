@@ -125,6 +125,20 @@ class ForbiddenAttributesProtectionTest < ActiveRecord::TestCase
     assert_equal 'Guille', person.first_name
   end
 
+  def test_where_not_checks_permitted
+    params = ProtectedParams.new(first_name: 'Guille', gender: 'm')
+
+    assert_raises(ActiveModel::ForbiddenAttributesError) do
+      Person.where().not(params)
+    end
+  end
+
+  def test_where_not_works_with_permitted_params
+    params = ProtectedParams.new(first_name: 'Guille').permit!
+    Person.create!(params)
+    assert_empty Person.where.not(params).select {|p| p.first_name == 'Guille' }
+  end
+
   def test_strong_params_style_objects_work_with_singular_associations
     params = ProtectedParams.new( name: "Stern", ship_attributes: ProtectedParams.new(name: "The Black Rock").permit!).permit!
     part = ShipPart.new(params)
