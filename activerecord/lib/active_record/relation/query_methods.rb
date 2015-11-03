@@ -43,7 +43,7 @@ module ActiveRecord
       #    User.where.not(name: "Jon", role: "admin")
       #    # SELECT * FROM users WHERE name != 'Jon' AND role != 'admin'
       def not(opts, *rest)
-        opts = sanitize_forbidden_attributes(opts) if opts.respond_to?(:permitted?)
+        opts = sanitize_forbidden_attributes(opts)
 
         where_clause = @scope.send(:where_clause_factory).build(opts, rest)
 
